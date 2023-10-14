@@ -19,3 +19,9 @@ https://git-scm.com/downloads => download gitbash
 
 Set your username: git config --global user.name "FIRST_NAME LAST_NAME"
 Set your email address: git config --global user.email "MY_NAME@example.com"
+
+
+//1. Initialize repo
+2. commit
+3. publish branch
+4.  private/public repo
