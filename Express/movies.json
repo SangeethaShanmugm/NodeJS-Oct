@@ -1,9 +1,4 @@
-const express = require('express')//third party package
-const fs = require('fs');
-const app = express()
-const PORT = 3000
-
-const movies = [
+[
     {
         "id": "100",
         "name": "RRR",
@@ -69,24 +64,3 @@ const movies = [
         "trailer": "https://www.youtube.com/embed/NgsQ8mVkN8w"
     }
 ]
-//req -> what you send to server
-//res => what we receive from server
-app.get('/', (req, res) => {
-    res.send('Hello Everyone Good Day😆😆')
-})
-
-
-app.get('/getMovies', (req, res) => {
-    res.send(movies)
-    // fs.readFile("./movies.json", (err, result) => {
-    //     if (err) {
-    //         console.log(err)
-    //     } else {
-    //         res.send(JSON.parse(result))
-    //     }
-    // })
-
-})
-
-
-app.listen(PORT, () => console.log("The server started on the port", PORT))
