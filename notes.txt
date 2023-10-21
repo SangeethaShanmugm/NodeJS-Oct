@@ -25,3 +25,12 @@ Set your email address: git config --global user.email "MY_NAME@example.com"
 2. commit
 3. publish branch
 4.  private/public repo
+
+
+Mongodb
+-----------
+
+show dbs => list all dbs
+use dbName => switch/ create a db
+db => current db
+show collections => list collections in db
