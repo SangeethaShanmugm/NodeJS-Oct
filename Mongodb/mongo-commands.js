@@ -82,3 +82,9 @@ db.movies.insert([
 
 
 db.movies.find().pretty()
+
+db.movies.update({ name: "Iron man 2" }, { $set: { name: "Iron man 1" } })
+
+db.movies.findOne({name: "Iron man 1"})
+
+db.movies.deleteOne({name: "Iron man 1"})
