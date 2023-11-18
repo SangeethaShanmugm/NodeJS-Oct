@@ -34,3 +34,17 @@ show dbs => list all dbs
 use dbName => switch/ create a db
 db => current db
 show collections => list collections in db
+
+test runner 
+--------------
+
+allow u to run functional test and export results
+
+assertion library
+----------------
+simple set of assertion test that can be used for test invariants
+
+headless browser
+----------------
+
+an automated browser that runs without GUI
