@@ -1,63 +1,67 @@
-import express from "express";
-import http from "http";
-import path from "path";
-let io = require("socket.io");
+import express from "express"
+import http from "http"
+import path from "path"
+let io = require("socket.io")
 
-const LocalStorage = require("node-localstorage").LocalStorage;
-let localStorage = new LocalStorage("./scratch");
-const iplocate = require("node-iplocate");
-const publicIp = require("public-ip");
+let app = express()
+const PORT = 4000
 
-let app = express();
-const PORT = 4001;
-app.use(express.static(path.join(__dirname, "public")));
+const LocalStorage = require("node-localstorage").LocalStorage
+let localstorage = new LocalStorage("./scratch")
+const publicIp = require("public-ip")
+const iplocate = require("node-iplocate")
+
+
+app.use(express.static(path.join(__dirname, "public")))
 
 app.get("/", (req, res) => {
-  res.render("index.html");
-});
+    res.render("index.html")
+})
 
 let server = http.createServer(app).listen(PORT, () => {
-  console.log("Server listening on port ", PORT);
-});
+    console.log("Server started on port", PORT)
+})
 
-io = require("socket.io").listen(server);
-
-//handle socket traffic
+io = require("socket.io").listen(server)
+//handle socket 
 
 io.sockets.on("connection", (socket) => {
-  var list = io.sockets.sockets;
-  var users = Object.keys(list);
+    var list = io.sockets.sockets
+    console.log(list)
+    var users = Object.keys(list)
+    console.log(users)
+    //set nickname
+    socket.on("nick", (nick) => {
+        socket.set("nickText", nick)
+        socket.emit("userlist", users)
+    })
 
-  //set nickname
-  socket.on("nick", (nick) => {
-    socket.set("nickname", nick);
-    socket.emit("userlist", users);
-  });
+    //chat data 
+    socket.on("chat", (data) => {
+        socket.get("nickText", (err, nick) => {
 
-  //chat data
+            //get public Ip address
+            publicIp.v4().then((ip) => {
+                iplocate(ip).then((results) => {
+                    console.log("public Ip", results)
+                    let response = JSON.stringify(results.city)
+                    console.log(response)
+                    localstorage.setItem("userlocal", response)
+                })
+            })
 
-  socket.on("chat", (data) => {
-    socket.get("nickname", (err, nick) => {
-      //getting public IP address
-      publicIp.v4().then((ip) => {
-        iplocate(ip).then((results) => {
-          //   console.log("Public IP", results);
-          let response = JSON.stringify(results.city, null, 2);
-          console.log(response);
-          localStorage.setItem("userlocal", response);
-        });
-      });
+            let nickname = err ? "Anonymous" : nick
+            let payload = {
+                message: data.message,
+                nick: nickname,
+                location: localstorage.getItem("userlocal")
+            }
 
-      let nickname = err ? "Anonymous" : nick;
+            console.log(payload)
 
-      let payload = {
-        message: data.message,
-        nick: nickname,
-        location: localStorage.getItem("userlocal"),
-      };
+            socket.emit("chat", payload)
+            socket.broadcast.emit("chat", payload)
 
-      socket.emit("chat", payload);
-      socket.broadcast.emit("chat", payload);
-    });
-  });
-});
+        })
+    })
+})
